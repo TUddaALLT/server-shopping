@@ -28,7 +28,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Table(name = "Product")
+// @Table(name = "Product")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -85,23 +85,5 @@ public class Product {
                                                                            // (Cart)
         )
         private Set<MyCart> carts;
-
-        // @Override
-        // public String toString() {
-        // return "{" +
-        // " id='" + getId() + "'" +
-        // ", img='" + getImg() + "'" +
-        // ", author='" + getAuthor() + "'" +
-        // ", name='" + getName() + "'" +
-        // ", brand='" + getBrand() + "'" +
-        // ", category='" + getCategory() + "'" +
-        // ", suplier='" + getSuplier() + "'" +
-        // ", original='" + getOriginal() + "'" +
-        // ", price='" + getPrice() + "'" +
-        // ", quantity='" + getQuantity() + "'" +
-        // ", order_products='" + getOrder_products() + "'" +
-        // ", carts='" + getCarts() + "'" +
-        // "}";
-        // }
 
 }
