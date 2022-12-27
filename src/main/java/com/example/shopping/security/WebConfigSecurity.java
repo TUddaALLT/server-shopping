@@ -27,8 +27,8 @@ public class WebConfigSecurity {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf().disable().authorizeRequests()
                 .antMatchers("/*").permitAll()
-                .antMatchers("/order").authenticated()
-                .antMatchers("/cart").authenticated()
+                .antMatchers("/order/*").authenticated()
+                .antMatchers("/cart/*").authenticated()
                 // .antMatchers("/order/*").authenticated()
                 // .antMatchers("/cart/*").authenticated()
                 // authorization

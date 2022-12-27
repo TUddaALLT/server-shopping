@@ -63,19 +63,4 @@ public class MyOrder {
     @OneToMany(mappedBy = "myOrder", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<OrderDetails> orderDetails;
 
-    // @Override
-    // public String toString() {
-    // return "{" +
-    // " orderId='" + getOrderId() + "'" +
-    // ", orderDate='" + getOrderDate() + "'" +
-    // ", totalPrice='" + getTotalPrice() + "'" +
-    // ", address='" + getAddress() + "'" +
-    // ", phoneNumber='" + getPhoneNumber() + "'" +
-    // ", name='" + getName() + "'" +
-    // ", products='" + getProducts() + "'" +
-    // ", account='" + getAccount() + "'" +
-    // ", orderDetails='" + getOrderDetails() + "'" +
-    // "}";
-    // }
-
 }

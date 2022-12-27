@@ -2,7 +2,6 @@ package com.example.shopping.model.dto;
 
 import java.math.BigDecimal;
 import java.util.Set;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,22 +15,9 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class OrderResponseDTO {
-
-    private int orderId;
-
-    private String orderDate;
-
+public class MyCartResponseDTO {
+    private long id;
     private BigDecimal totalPrice;
-
-    private String address;
-
-    private String phoneNumber;
-
-    private String name;
-
     private Set<ProductResponseDTO> products;
-
-    private Set<OrderDetailsResponseDTO> orderDetails;
-
+    private Set<CartDetailsResponseDTO> cartDetails;
 }

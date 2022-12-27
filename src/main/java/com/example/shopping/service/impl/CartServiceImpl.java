@@ -14,6 +14,9 @@ import com.example.shopping.entity.CartDetails;
 import com.example.shopping.entity.MyCart;
 import com.example.shopping.entity.Product;
 import com.example.shopping.model.ResponseObject;
+import com.example.shopping.model.dto.CartDetailsResponseDTO;
+import com.example.shopping.model.dto.MyCartResponseDTO;
+import com.example.shopping.model.dto.ProductResponseDTO;
 import com.example.shopping.repository.AccountRepository;
 import com.example.shopping.repository.CartRepository;
 import com.example.shopping.repository.ProductRepository;
@@ -75,9 +78,45 @@ public class CartServiceImpl implements CartService {
     public ResponseEntity<ResponseObject> getMyCart(HttpServletRequest request) {
         String token = request.getHeader("Authorization").substring(6);
         Account acc = jwtTokenUtil.getAccountLogin(token);
+
+        Set<ProductResponseDTO> resProducts = new HashSet<>();
+        Set<CartDetailsResponseDTO> rescCartDetailsResponseDTOs = new HashSet<>();
+        for (CartDetails x : acc.getCart().getCartDetails()) {
+            CartDetailsResponseDTO cartdeDetailsResponseDTO = CartDetailsResponseDTO
+                    .builder()
+                    .id(x.getId())
+                    .quantity(x.getQuantity())
+                    .productID(x.getProductID())
+                    .build();
+            rescCartDetailsResponseDTOs.add(cartdeDetailsResponseDTO);
+        }
+        for (Product p : acc.getCart().getProducts()) {
+            ProductResponseDTO productResponseDTO = ProductResponseDTO
+                    .builder()
+                    .id(p.getId())
+                    .img(p.getImg())
+                    .author(p.getAuthor())
+                    .name(p.getName())
+                    .brand(p.getBrand())
+                    .category(p.getCategory())
+                    .suplier(p.getSuplier())
+                    .original(p.getOriginal())
+                    .price(p.getPrice())
+                    .quantity(p.getQuantity())
+                    .build();
+            resProducts.add(productResponseDTO);
+        }
+
+        MyCartResponseDTO myResponse = MyCartResponseDTO.builder()
+                .id(acc.getCart().getId())
+                .totalPrice(acc.getCart().getTotalPrice())
+                .products(resProducts)
+                .cartDetails(rescCartDetailsResponseDTOs)
+                .build();
+
         if (acc.getCart() != null) {
             return ResponseEntity.ok().body(ResponseObject.builder().status("500").message("add to cart success")
-                    .data(acc.getCart().toString())
+                    .data(myResponse)
                     .build());
         }
         return ResponseEntity.ok().body(ResponseObject.builder().status("400").message("Cart is empty")

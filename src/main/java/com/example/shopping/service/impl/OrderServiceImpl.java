@@ -18,12 +18,14 @@ import com.example.shopping.entity.OrderDetails;
 import com.example.shopping.entity.Product;
 import com.example.shopping.model.ResponseObject;
 import com.example.shopping.model.dto.OrderCreateDTO;
+import com.example.shopping.model.dto.OrderDetailsResponseDTO;
+import com.example.shopping.model.dto.OrderResponseDTO;
+import com.example.shopping.model.dto.ProductResponseDTO;
 import com.example.shopping.repository.AccountRepository;
 import com.example.shopping.repository.OrderRepository;
 import com.example.shopping.repository.ProductRepository;
 import com.example.shopping.service.OrderService;
 import com.example.shopping.utils.JwtTokenUtils;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
 
@@ -76,9 +78,51 @@ public class OrderServiceImpl implements OrderService {
         orderProducts.add(myOrder);
         acc.setOrders(orderProducts);
         acc = accountRepository.save(acc);
+        Set<ProductResponseDTO> resProducts = new HashSet<>();
+        for (Product p : products) {
+            ProductResponseDTO productResponseDTO = ProductResponseDTO
+                    .builder()
+                    .id(p.getId())
+                    .img(p.getImg())
+                    .author(p.getAuthor())
+                    .name(p.getName())
+                    .brand(p.getBrand())
+                    .category(p.getCategory())
+                    .suplier(p.getSuplier())
+                    .original(p.getOriginal())
+                    .price(p.getPrice())
+                    .quantity(p.getQuantity())
+                    .build();
+            resProducts.add(productResponseDTO);
+        }
+
+        Set<OrderDetailsResponseDTO> resOrderDetailsResponseDTO = new HashSet<>();
+        for (OrderDetails o : orderDetails) {
+            OrderDetailsResponseDTO detailsResponseDTO = OrderDetailsResponseDTO
+                    .builder()
+                    .id(o.getId())
+                    .quantity(o.getQuantity())
+                    .ID_product(o.getID_product())
+                    .feedback(o.getFeedback())
+                    .price(o.getPrice())
+                    .build();
+            resOrderDetailsResponseDTO.add(detailsResponseDTO);
+        }
+
+        OrderResponseDTO orderDetailsResponseDTO = OrderResponseDTO
+                .builder()
+                .orderId(myOrder.getOrderId())
+                .orderDate(myOrder.getOrderDate())
+                .totalPrice(myOrder.getTotalPrice())
+                .address(myOrder.getAddress())
+                .phoneNumber(myOrder.getPhoneNumber())
+                .name(myOrder.getName())
+                .products(resProducts)
+                .orderDetails(resOrderDetailsResponseDTO)
+                .build();
 
         return ResponseEntity.ok().body(ResponseObject.builder().status("500").message("create order success")
-                .data(orderProducts.toString())
+                .data(orderDetailsResponseDTO)
                 .build());
     }
 
@@ -89,8 +133,57 @@ public class OrderServiceImpl implements OrderService {
 
         if (acc != null) {
             Set<MyOrder> orders = acc.getOrders();
+
+            Set<OrderResponseDTO> response = new HashSet<OrderResponseDTO>();
+
+            for (MyOrder orderResponseDTO : orders) {
+                Set<ProductResponseDTO> resProducts = new HashSet<>();
+                for (Product p : orderResponseDTO.getProducts()) {
+                    ProductResponseDTO productResponseDTO = ProductResponseDTO
+                            .builder()
+                            .id(p.getId())
+                            .img(p.getImg())
+                            .author(p.getAuthor())
+                            .name(p.getName())
+                            .brand(p.getBrand())
+                            .category(p.getCategory())
+                            .suplier(p.getSuplier())
+                            .original(p.getOriginal())
+                            .price(p.getPrice())
+                            .quantity(p.getQuantity())
+                            .build();
+                    resProducts.add(productResponseDTO);
+                }
+
+                Set<OrderDetailsResponseDTO> resOrderDetailsResponseDTO = new HashSet<>();
+                for (OrderDetails o : orderResponseDTO.getOrderDetails()) {
+                    OrderDetailsResponseDTO detailsResponseDTO = OrderDetailsResponseDTO
+                            .builder()
+                            .id(o.getId())
+                            .quantity(o.getQuantity())
+                            .ID_product(o.getID_product())
+                            .feedback(o.getFeedback())
+                            .price(o.getPrice())
+                            .build();
+                    resOrderDetailsResponseDTO.add(detailsResponseDTO);
+                }
+
+                OrderResponseDTO orderDetailsResponseDTO = OrderResponseDTO
+                        .builder()
+                        .orderId(orderResponseDTO.getOrderId())
+                        .orderDate(orderResponseDTO.getOrderDate())
+                        .totalPrice(orderResponseDTO.getTotalPrice())
+                        .address(orderResponseDTO.getAddress())
+                        .phoneNumber(orderResponseDTO.getPhoneNumber())
+                        .name(orderResponseDTO.getName())
+                        .products(resProducts)
+                        .orderDetails(resOrderDetailsResponseDTO)
+                        .build();
+                response.add(orderDetailsResponseDTO);
+            }
+
             return ResponseEntity.ok().body(ResponseObject.builder().status("500").message("get order success")
-                    .data(orders.toString())
+                    .data(response)
                     .build());
         }
         return null;
