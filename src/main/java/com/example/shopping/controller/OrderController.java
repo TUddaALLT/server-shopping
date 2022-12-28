@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin
+@CrossOrigin("http://localhost:3000")
 public class OrderController {
 
     private final OrderService orderService;

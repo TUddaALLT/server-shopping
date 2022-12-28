@@ -56,13 +56,23 @@ public class CartServiceImpl implements CartService {
         if (cart.getCartDetails() != null) {
             cartDetail = new HashSet<>(cart.getCartDetails());
         }
-        CartDetails xDetails = CartDetails.builder().productID(id).cart(cart).quantity(quantity).build();
-        cartDetail.add(xDetails);
-        if (product.isPresent()) {
-            product.get().setCarts(carts);
-            System.out.println(product.get().toString());
-            products.add(product.get());
+        int checkIsExist = 0;
+        for (CartDetails cartDetails : cartDetail) {
+            if (cartDetails.getProductID() == id) {
+                cartDetails.setQuantity(quantity);
+                checkIsExist = 1;
+            }
         }
+        if (checkIsExist == 0) {
+            CartDetails xDetails = CartDetails.builder().productID(id).cart(cart).quantity(quantity).build();
+            cartDetail.add(xDetails);
+            if (product.isPresent()) {
+                product.get().setCarts(carts);
+                System.out.println(product.get().toString());
+                products.add(product.get());
+            }
+        }
+
         cart.setProducts(products);
         cart.setCartDetails(cartDetail);
         cartRepository.save(cart);
@@ -115,7 +125,7 @@ public class CartServiceImpl implements CartService {
                 .build();
 
         if (acc.getCart() != null) {
-            return ResponseEntity.ok().body(ResponseObject.builder().status("500").message("add to cart success")
+            return ResponseEntity.ok().body(ResponseObject.builder().status("500").message("get my cart success")
                     .data(myResponse)
                     .build());
         }

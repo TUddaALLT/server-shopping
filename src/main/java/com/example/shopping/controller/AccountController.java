@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin
+@CrossOrigin("http://localhost:3000")
 public class AccountController {
     private final AccountService accountService;
 
