@@ -16,7 +16,8 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin
+@CrossOrigin("http://localhost:3000")
+
 public class CartController {
     private final CartService cartService;
 
