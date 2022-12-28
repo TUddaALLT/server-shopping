@@ -47,13 +47,4 @@ public class MyCart {
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<CartDetails> cartDetails;
 
-    // @Override
-    // public String toString() {
-    // return "{" +
-    // " id='" + getId() + "'" +
-    // ", totalPrice='" + getTotalPrice() + "'" +
-    // ", products='" + getProducts() + "'" +
-    // ", cartDetails='" + getCartDetails() + "'" +
-    // "}";
-    // }
 }

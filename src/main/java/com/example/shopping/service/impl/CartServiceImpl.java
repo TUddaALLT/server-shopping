@@ -1,6 +1,7 @@
 package com.example.shopping.service.impl;
 
 import java.util.Set;
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Optional;
 
@@ -59,7 +60,7 @@ public class CartServiceImpl implements CartService {
         int checkIsExist = 0;
         for (CartDetails cartDetails : cartDetail) {
             if (cartDetails.getProductID() == id) {
-                cartDetails.setQuantity(quantity);
+                cartDetails.setQuantity(quantity + product.get().getQuantity());
                 checkIsExist = 1;
             }
         }
@@ -72,7 +73,17 @@ public class CartServiceImpl implements CartService {
                 products.add(product.get());
             }
         }
+        BigDecimal totalPrice = BigDecimal.valueOf(0);
 
+        for (CartDetails c : cartDetail) {
+            for (Product p : products) {
+                if (c.getId() == p.getId()) {
+                    totalPrice = totalPrice.add(
+                            BigDecimal.valueOf(c.getQuantity()).multiply(p.getPrice()));
+                }
+            }
+        }
+        cart.setTotalPrice(totalPrice);
         cart.setProducts(products);
         cart.setCartDetails(cartDetail);
         cartRepository.save(cart);
