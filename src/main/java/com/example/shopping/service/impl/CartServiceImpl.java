@@ -60,7 +60,9 @@ public class CartServiceImpl implements CartService {
         int checkIsExist = 0;
         for (CartDetails cartDetails : cartDetail) {
             if (cartDetails.getProductID() == id) {
-                cartDetails.setQuantity(quantity + product.get().getQuantity());
+                System.out.println(cartDetails.getQuantity());
+                cartDetails.setQuantity(quantity + cartDetails.getQuantity());
+                cartDetail.add(cartDetails);
                 checkIsExist = 1;
             }
         }
