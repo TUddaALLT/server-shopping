@@ -16,14 +16,14 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin("http://localhost:3000")
-
+@CrossOrigin
 public class CartController {
     private final CartService cartService;
 
     @PostMapping("/cart/{id}/{quantity}")
     public ResponseEntity<ResponseObject> cart(HttpServletRequest request,
             @PathVariable int id, @PathVariable int quantity) {
+        System.out.println("con me bug");
         return cartService.addToCart(request, id, quantity);
     }
 

@@ -93,7 +93,7 @@ public class CartServiceImpl implements CartService {
         acc = accountRepository.save(acc);
 
         return ResponseEntity.ok().body(ResponseObject.builder().status("500").message("add to cart success")
-                .data(acc.getCart().toString())
+                .data(null)
                 .build());
     }
 
