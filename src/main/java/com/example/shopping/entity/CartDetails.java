@@ -26,7 +26,7 @@ import lombok.ToString;
 public class CartDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private int id;
 
     @Column(name = "quantity")
     private int quantity;
@@ -37,15 +37,5 @@ public class CartDetails {
     @ToString.Exclude
     @JoinColumn(name = "cart_id", referencedColumnName = "cart_id")
     private MyCart cart;
-
-    // @Override
-    // public String toString() {
-    // return "{" +
-    // " id='" + getId() + "'" +
-    // ", quantity='" + getQuantity() + "'" +
-    // ", productID='" + getProductID() + "'" +
-    // ", cart='" + getCart() + "'" +
-    // "}";
-    // }
 
 }

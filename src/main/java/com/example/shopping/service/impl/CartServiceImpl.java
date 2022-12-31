@@ -2,7 +2,11 @@ package com.example.shopping.service.impl;
 
 import java.util.Set;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,6 +23,7 @@ import com.example.shopping.model.dto.CartDetailsResponseDTO;
 import com.example.shopping.model.dto.MyCartResponseDTO;
 import com.example.shopping.model.dto.ProductResponseDTO;
 import com.example.shopping.repository.AccountRepository;
+import com.example.shopping.repository.CartDetailsRepository;
 import com.example.shopping.repository.CartRepository;
 import com.example.shopping.repository.ProductRepository;
 import com.example.shopping.service.CartService;
@@ -33,6 +38,7 @@ public class CartServiceImpl implements CartService {
     private final JwtTokenUtils jwtTokenUtil;
     private final ProductRepository productRepository;
     private final CartRepository cartRepository;
+    private final CartDetailsRepository cartDetailsRepository;
 
     @Override
     public ResponseEntity<ResponseObject> addToCart(HttpServletRequest request, int id, int quantity) {
@@ -49,6 +55,12 @@ public class CartServiceImpl implements CartService {
         }
 
         Optional<Product> product = productRepository.findById(id);
+        if (!product.isPresent()) {
+            return ResponseEntity.ok().body(ResponseObject.builder().status("400").message("product is not exist")
+                    .data(null)
+                    .build());
+
+        }
         Set<MyCart> carts = new HashSet<>();
         carts.add(cart);
 
@@ -77,13 +89,17 @@ public class CartServiceImpl implements CartService {
         }
         BigDecimal totalPrice = BigDecimal.valueOf(0);
 
-        for (CartDetails c : cartDetail) {
-            for (Product p : products) {
-                if (c.getId() == p.getId()) {
-                    totalPrice = totalPrice.add(
-                            BigDecimal.valueOf(c.getQuantity()).multiply(p.getPrice()));
+        try {
+            for (CartDetails c : cartDetail) {
+                for (Product p : products) {
+                    if (c.getProductID() == p.getId()) {
+                        totalPrice = totalPrice.add(
+                                BigDecimal.valueOf(c.getQuantity()).multiply(p.getPrice()));
+                    }
                 }
             }
+        } catch (Exception e) {
+            // TODO: handle exception
         }
         cart.setTotalPrice(totalPrice);
         cart.setProducts(products);
@@ -104,15 +120,22 @@ public class CartServiceImpl implements CartService {
 
         Set<ProductResponseDTO> resProducts = new HashSet<>();
         Set<CartDetailsResponseDTO> rescCartDetailsResponseDTOs = new HashSet<>();
-        for (CartDetails x : acc.getCart().getCartDetails()) {
-            CartDetailsResponseDTO cartdeDetailsResponseDTO = CartDetailsResponseDTO
-                    .builder()
-                    .id(x.getId())
-                    .quantity(x.getQuantity())
-                    .productID(x.getProductID())
-                    .build();
-            rescCartDetailsResponseDTOs.add(cartdeDetailsResponseDTO);
+        try {
+            for (CartDetails x : acc.getCart().getCartDetails()) {
+                CartDetailsResponseDTO cartdeDetailsResponseDTO = CartDetailsResponseDTO
+                        .builder()
+                        .id(x.getId())
+                        .quantity(x.getQuantity())
+                        .productID(x.getProductID())
+                        .build();
+                rescCartDetailsResponseDTOs.add(cartdeDetailsResponseDTO);
+            }
+        } catch (Exception e) {
+            return ResponseEntity.ok().body(ResponseObject.builder().status("400").message("Cart is empty")
+                    .data(null)
+                    .build());
         }
+
         for (Product p : acc.getCart().getProducts()) {
             ProductResponseDTO productResponseDTO = ProductResponseDTO
                     .builder()
@@ -130,10 +153,18 @@ public class CartServiceImpl implements CartService {
             resProducts.add(productResponseDTO);
         }
 
+        List<ProductResponseDTO> res = new ArrayList<>();
+        res.addAll(resProducts);
+        Collections.sort(res, new Comparator<ProductResponseDTO>() {
+            public int compare(ProductResponseDTO o1, ProductResponseDTO o2) {
+                return o1.getId() - o2.getId();
+            }
+        });
+
         MyCartResponseDTO myResponse = MyCartResponseDTO.builder()
                 .id(acc.getCart().getId())
                 .totalPrice(acc.getCart().getTotalPrice())
-                .products(resProducts)
+                .products(res)
                 .cartDetails(rescCartDetailsResponseDTOs)
                 .build();
 
@@ -145,6 +176,18 @@ public class CartServiceImpl implements CartService {
         return ResponseEntity.ok().body(ResponseObject.builder().status("400").message("Cart is empty")
                 .data(null)
                 .build());
+    }
+
+    @Override
+    public ResponseEntity<ResponseObject> updateCartDetails(HttpServletRequest request, int id, int quantity) {
+        System.out.println("update quantity");
+        Optional<CartDetails> cartDetails = cartDetailsRepository.findById(id);
+
+        if (cartDetails.isPresent()) {
+            cartDetails.get().setQuantity(quantity);
+            cartDetailsRepository.save(cartDetails.get());
+        }
+        return null;
     }
 
 }

@@ -15,7 +15,7 @@ import lombok.ToString;
 @ToString
 public class CartDetailsResponseDTO {
 
-    private Long id;
+    private int id;
 
     private int quantity;
 

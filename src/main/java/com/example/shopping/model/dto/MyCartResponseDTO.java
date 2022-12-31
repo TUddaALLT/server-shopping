@@ -1,6 +1,7 @@
 package com.example.shopping.model.dto;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,6 +19,6 @@ import lombok.ToString;
 public class MyCartResponseDTO {
     private long id;
     private BigDecimal totalPrice;
-    private Set<ProductResponseDTO> products;
+    private List<ProductResponseDTO> products;
     private Set<CartDetailsResponseDTO> cartDetails;
 }
