@@ -1,1 +1,1 @@
-# server-shopping
+# server-shopping-springboot
