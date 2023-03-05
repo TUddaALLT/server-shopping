@@ -18,25 +18,30 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class AccountServiceImpl implements AccountService {
-    private final AccountRepository accountRepository;
-    private final JwtTokenUtils jwtTokenUtils;
+        private final AccountRepository accountRepository;
+        private final JwtTokenUtils jwtTokenUtils;
 
-    @Override
-    public ResponseEntity<ResponseObject> login(AccountDTORequest account) {
-        System.out.println("login xxx");
-        Optional<Account> acc = accountRepository.findAccountByUsername(account.getUsername());
-        System.out.println("login yyy");
-        if (acc.isPresent()) {
-            if (acc.get().getPassword().equals(account.getPassword())) {
-                return ResponseEntity.ok().body(ResponseObject.builder().status("500").message("login successfully")
-                        .data(AccountDTOResponse.builder().username(acc.get().getUsername())
-                                .token(jwtTokenUtils.generateToken(acc.get(), 24 * 60 * 60)).build())
-                        .build());
-            }
+        @Override
+        public ResponseEntity<ResponseObject> login(AccountDTORequest account) {
+
+                Optional<Account> acc = accountRepository.findAccountByUsername(account.getUsername());
+
+                if (acc.isPresent() && acc.get().getPassword().equals(account.getPassword())) {
+
+                        return ResponseEntity.ok()
+                                        .body(ResponseObject.builder().status("500").message("login successfully")
+                                                        .data(AccountDTOResponse.builder()
+                                                                        .username(acc.get().getUsername())
+                                                                        .token(jwtTokenUtils.generateToken(acc.get(),
+                                                                                        24 * 60 * 60))
+                                                                        .build())
+                                                        .build());
+
+                }
+
+                return ResponseEntity.ok().body(ResponseObject.builder().status("400").message("login failed")
+                                .data(null)
+                                .build());
         }
-        return ResponseEntity.ok().body(ResponseObject.builder().status("400").message("login failed")
-                .data(null)
-                .build());
-    }
 
 }

@@ -33,6 +33,7 @@ public class WebConfigSecurity {
                 // .antMatchers("/cart/*").authenticated()
                 // authorization
                 .antMatchers("/admin").hasAnyAuthority("ADMIN")
+
                 .and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.addFilterBefore(jwtFilter,

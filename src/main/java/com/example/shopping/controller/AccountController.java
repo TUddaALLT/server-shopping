@@ -20,8 +20,8 @@ public class AccountController {
 
     @PostMapping("/login")
     public ResponseEntity<ResponseObject> login(@RequestBody AccountDTORequest account) {
-
         return accountService.login(account);
+
     }
 
     // @PostMapping("/register")

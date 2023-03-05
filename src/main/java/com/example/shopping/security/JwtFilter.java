@@ -45,11 +45,11 @@ public class JwtFilter extends OncePerRequestFilter {
 
                 payload = jwtTokenUtil.getTokenPayload(token);
             } catch (SignatureException e) {
-                System.out.println("Invalid token");
+                System.err.println("Invalid token");
             } catch (IllegalArgumentException e) {
-                System.out.println("Unable to get token");
+                System.err.println("Unable to get token");
             } catch (ExpiredJwtException e) {
-                System.out.println("Token has expired");
+                System.err.println("Token has expired");
             }
 
         } else {
@@ -62,7 +62,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 List<SimpleGrantedAuthority> authorities = new ArrayList<>();
                 // if (jwtTokenUtil.validate(token, user)) {
                 // cap quyen cho user
-                // authorities.add(new SimpleGrantedAuthority("xxx"));
+                authorities.add(new SimpleGrantedAuthority(account.getRole()));
                 UserDetails userDetails = new org.springframework.security.core.userdetails.User(account.getUsername(),
                         account.getPassword(), authorities);
                 UsernamePasswordAuthenticationToken userNamePassword = new UsernamePasswordAuthenticationToken(
