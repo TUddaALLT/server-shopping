@@ -3,11 +3,7 @@ package com.example.shopping.controller;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.example.shopping.model.ResponseObject;
 import com.example.shopping.model.dto.OrderCreateDTO;
@@ -28,10 +24,15 @@ public class OrderController {
         return orderService.createOrder(request, order);
     }
 
-    @GetMapping("/order/getOrders")
+    @GetMapping("/myorder")
     public ResponseEntity<ResponseObject> getOrders(HttpServletRequest request) {
         System.out.println("get orders");
         return orderService.getOrders(request);
+    }
+    @GetMapping("/myorder/{id}")
+    public ResponseEntity<ResponseObject> getOrdersById(HttpServletRequest request , @PathVariable int id) {
+        System.out.println("get orders");
+        return orderService.getOrdersById(request, id);
     }
 
 }

@@ -16,6 +16,7 @@ import lombok.ToString;
 public class AccountDTORequest {
     private String username;
     private String password;
+    private String confirm_password;
     private int role;
 
 }

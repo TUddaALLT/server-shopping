@@ -14,4 +14,7 @@ public interface CartService {
 
     ResponseEntity<ResponseObject> updateCartDetails(HttpServletRequest request, int id, int quantity);
 
+    ResponseEntity<ResponseObject> removeProducts(HttpServletRequest request);
+
+    ResponseEntity<ResponseObject> removeCart(HttpServletRequest request, int id);
 }

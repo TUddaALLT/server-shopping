@@ -39,7 +39,20 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public ResponseEntity<ResponseObject> createOrder(HttpServletRequest request, OrderCreateDTO order) {
+        if(order.getName()==null||order.getAddress()==null || order.getPhoneNumber().length()<10 ){
+            return ResponseEntity.ok().body(ResponseObject.builder().status("400").message("input is failed")
+                    .data(null)
+                    .build());
 
+        }else{
+            try {
+                Integer.parseInt(order.getPhoneNumber());
+            }catch (Exception e){
+                return ResponseEntity.ok().body(ResponseObject.builder().status("400").message("number format ex")
+                        .data(null)
+                        .build());
+            }
+        }
         String token = request.getHeader("Authorization").substring(6);
         Account acc = jwtTokenUtil.getAccountLogin(token);
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
@@ -182,6 +195,73 @@ public class OrderServiceImpl implements OrderService {
                 response.add(orderDetailsResponseDTO);
             }
 
+            return ResponseEntity.ok().body(ResponseObject.builder().status("500").message("get order success")
+                    .data(response)
+                    .build());
+        }
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<ResponseObject> getOrdersById(HttpServletRequest request, int id) {
+        String token = request.getHeader("Authorization").substring(6);
+        Account acc = jwtTokenUtil.getAccountLogin(token);
+
+        if (acc != null) {
+            Set<MyOrder> orders = acc.getOrders();
+            orders.removeIf((MyOrder o) -> !(o.getOrderId()==id));
+            Set<OrderResponseDTO> response = new HashSet<OrderResponseDTO>();
+
+            for (MyOrder orderResponseDTO : orders) {
+                Set<ProductResponseDTO> resProducts = new HashSet<>();
+                for (Product p : orderResponseDTO.getProducts()) {
+                    ProductResponseDTO productResponseDTO = ProductResponseDTO
+                            .builder()
+                            .id(p.getId())
+                            .img(p.getImg())
+                            .author(p.getAuthor())
+                            .name(p.getName())
+                            .brand(p.getBrand())
+                            .category(p.getCategory())
+                            .suplier(p.getSuplier())
+                            .original(p.getOriginal())
+                            .price(p.getPrice())
+                            .quantity(p.getQuantity())
+                            .build();
+                    resProducts.add(productResponseDTO);
+                }
+
+                Set<OrderDetailsResponseDTO> resOrderDetailsResponseDTO = new HashSet<>();
+                for (OrderDetails o : orderResponseDTO.getOrderDetails()) {
+                    OrderDetailsResponseDTO detailsResponseDTO = OrderDetailsResponseDTO
+                            .builder()
+                            .id(o.getId())
+                            .quantity(o.getQuantity())
+                            .ID_product(o.getID_product())
+                            .feedback(o.getFeedback())
+                            .price(o.getPrice())
+                            .build();
+                    resOrderDetailsResponseDTO.add(detailsResponseDTO);
+                }
+
+                OrderResponseDTO orderDetailsResponseDTO = OrderResponseDTO
+                        .builder()
+                        .orderId(orderResponseDTO.getOrderId())
+                        .orderDate(orderResponseDTO.getOrderDate())
+                        .totalPrice(orderResponseDTO.getTotalPrice())
+                        .address(orderResponseDTO.getAddress())
+                        .phoneNumber(orderResponseDTO.getPhoneNumber())
+                        .name(orderResponseDTO.getName())
+                        .products(resProducts)
+                        .orderDetails(resOrderDetailsResponseDTO)
+                        .build();
+                response.add(orderDetailsResponseDTO);
+            }
+            if(response.size()==0){
+                return ResponseEntity.ok().body(ResponseObject.builder().status("400").message("Order id is not existed")
+                        .data(null)
+                        .build());
+            }
             return ResponseEntity.ok().body(ResponseObject.builder().status("500").message("get order success")
                     .data(response)
                     .build());

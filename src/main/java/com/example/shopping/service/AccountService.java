@@ -9,4 +9,6 @@ public interface AccountService {
 
     ResponseEntity<ResponseObject> login(AccountDTORequest account);
 
+    ResponseEntity<ResponseObject> register(AccountDTORequest account);
+
 }

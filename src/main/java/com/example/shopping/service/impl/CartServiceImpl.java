@@ -43,12 +43,13 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public ResponseEntity<ResponseObject> addToCart(HttpServletRequest request, int id, int quantity) {
-
         String token = request.getHeader("Authorization").substring(6);
+        System.out.println(token);
         Account acc = jwtTokenUtil.getAccountLogin(token);
-        MyCart cart = acc.getCart();
-        if (cart == null) {
-            cart = new MyCart();
+        MyCart cart = new MyCart();
+
+        if(acc.getCart()!=null){
+            cart = acc.getCart();
         }
         Set<Product> products = new HashSet<>();
         if (cart.getProducts() != null) {
@@ -56,12 +57,22 @@ public class CartServiceImpl implements CartService {
         }
 
         Optional<Product> product = productRepository.findById(id);
+
+
         if (!product.isPresent()) {
+
             return ResponseEntity.ok().body(ResponseObject.builder().status("400").message("product is not exist")
+                    .data(null)
+                    .build());
+        }
+        if(product.get().getQuantity()<quantity){
+            return ResponseEntity.ok().body(ResponseObject.builder().status("400").message("quantity is exceed")
                     .data(null)
                     .build());
 
         }
+        product.get().setQuantity(product.get().getQuantity()-quantity);
+        productRepository.save(product.get());
         Set<MyCart> carts = new HashSet<>();
         carts.add(cart);
 
@@ -70,6 +81,7 @@ public class CartServiceImpl implements CartService {
         if (cart.getCartDetails() != null) {
             cartDetail = new HashSet<>(cart.getCartDetails());
         }
+
         int checkIsExist = 0;
         for (CartDetails cartDetails : cartDetail) {
             if (cartDetails.getProductID() == id) {
@@ -189,6 +201,52 @@ public class CartServiceImpl implements CartService {
             cartDetailsRepository.save(cartDetails.get());
         }
         return null;
+    }
+
+    @Override
+    public ResponseEntity<ResponseObject> removeProducts(HttpServletRequest request) {
+        String token = request.getHeader("Authorization").substring(6);
+        Account acc = jwtTokenUtil.getAccountLogin(token);
+        acc.getCart().setCartDetails(null);
+        acc.getCart().setProducts(null);
+        accountRepository.save(acc);
+        return ResponseEntity.ok().body(ResponseObject.builder().status("400").message("Cart is empty")
+                .data(null)
+                .build());
+    }
+
+    @Override
+    public ResponseEntity<ResponseObject> removeCart(HttpServletRequest request, int id) {
+        String token = request.getHeader("Authorization").substring(6);
+        System.out.println(token);
+        Account acc = jwtTokenUtil.getAccountLogin(token);
+        MyCart cart = new MyCart();
+
+        if(acc.getCart()!=null){
+            cart = acc.getCart();
+        }
+        Set<Product> products = new HashSet<>();
+        if (cart.getProducts() != null) {
+            products = new HashSet<>(cart.getProducts());
+            products.removeIf((Product p) -> p.getId() == id);
+        }
+        // cart detail
+        Set<CartDetails> cartDetail = new HashSet<>();
+        if (cart.getCartDetails() != null) {
+            cartDetail = new HashSet<>(cart.getCartDetails());
+            cartDetail.removeIf((CartDetails c) -> c.getProductID() == id);
+        }
+
+        cartDetailsRepository.saveAll(cartDetail);
+        cart.setProducts(products);
+        cart.setCartDetails(cartDetail);
+        cartRepository.save(cart);
+        acc.setCart(cart);
+        acc = accountRepository.save(acc);
+
+        return ResponseEntity.ok().body(ResponseObject.builder().status("500").message("remove successfully ")
+                .data(null)
+                .build());
     }
 
 }

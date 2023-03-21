@@ -11,8 +11,9 @@ public interface ProductService {
 
     ResponseEntity<ResponseObject> getProducts();
 
-    ResponseEntity<ResponseObject> createProduct(HttpServletRequest request, ProductDTOCreate productDTOCreate);
+    ResponseEntity<ResponseObject> createProduct(ProductDTOCreate productDTOCreate);
 
     ResponseEntity<ResponseObject> findById(HttpServletRequest request, int id);
 
+    ResponseEntity<ResponseObject> getProductsByName(String name);
 }

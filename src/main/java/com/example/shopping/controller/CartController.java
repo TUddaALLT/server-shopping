@@ -16,7 +16,8 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin
+
+@CrossOrigin("http://localhost:3000")
 public class CartController {
     private final CartService cartService;
 
@@ -25,9 +26,17 @@ public class CartController {
             @PathVariable int id, @PathVariable int quantity) {
         return cartService.addToCart(request, id, quantity);
     }
-
-    @GetMapping("/cart/mycart")
+    @PostMapping("/remove/cart/{id}")
+    public ResponseEntity<ResponseObject> remove(HttpServletRequest request,
+                                                 @PathVariable int id ) {
+        return cartService.removeCart(request, id );
+    }
+    @GetMapping("/cart")
     public ResponseEntity<ResponseObject> cart(HttpServletRequest request) {
         return cartService.getMyCart(request);
+    }
+    @PostMapping("/remove/products")
+    public  ResponseEntity<ResponseObject> remove(HttpServletRequest request){
+        return cartService.removeProducts(request);
     }
 }

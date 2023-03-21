@@ -24,17 +24,9 @@ public class AccountController {
 
     }
 
-    // @PostMapping("/register")
-    // public ResponseEntity<ResponseObject> register(@RequestBody AccountDTORequest
-    // account) {
-    // return accountService.register(account);
-    // }
+    @PostMapping("/register")
+    public ResponseEntity<ResponseObject> register(@RequestBody AccountDTORequest account) {
+        return accountService.register(account);
+    }
 
-    // @PostMapping("/account/update")
-    // public ResponseEntity<ResponseObject> updateAccount(HttpServletRequest
-    // request) {
-    // String token = request.getHeader("Authorization");
-    // token = token.substring(6);
-    // return accountService.updateAccount(token);
-    // }
 }

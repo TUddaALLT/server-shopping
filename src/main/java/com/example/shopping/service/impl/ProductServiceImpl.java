@@ -43,8 +43,14 @@ public class ProductServiceImpl implements ProductService {
         }
 
         @Override
-        public ResponseEntity<ResponseObject> createProduct(HttpServletRequest request,
+        public ResponseEntity<ResponseObject> createProduct(
                         ProductDTOCreate productDTOCreate) {
+                if(productDTOCreate.getName()==null || productDTOCreate.getPrice()<0 || productDTOCreate.getQuantity()<0){
+                        return ResponseEntity.ok()
+                                .body(ResponseObject.builder().status("500").message("Input failed")
+                                        .data(null)
+                                        .build());
+                }
                 Product product = Product.builder()
                                 .img(productDTOCreate.getImg())
                                 .name(productDTOCreate.getName())
@@ -79,6 +85,23 @@ public class ProductServiceImpl implements ProductService {
                                 .body(ResponseObject.builder().status("500").message("get product by id successfully")
                                                 .data(product)
                                                 .build());
+        }
+
+        @Override
+        public ResponseEntity<ResponseObject> getProductsByName(String name) {
+                List<Product> products  =  productRepository.findAll();
+                System.out.println(name);
+                products.removeIf((Product a) -> !a.getName().toLowerCase().contains(name.toLowerCase()));
+
+                if (products.size() > 0) {
+                        return ResponseEntity.ok()
+                                .body(ResponseObject.builder().status("500").message("success").data(products)
+                                        .build());
+                }
+                return ResponseEntity.ok()
+                        .body(ResponseObject.builder().status("400").message("out stock").data(null)
+                                .build());
+
         }
 
 }

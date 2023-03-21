@@ -25,15 +25,13 @@ public class WebConfigSecurity {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf().disable().authorizeRequests()
+        http.cors().disable()
+                .csrf().disable().authorizeRequests()
                 .antMatchers("/*").permitAll()
-                .antMatchers("/order").authenticated()
-                .antMatchers("/cart").authenticated()
-                // .antMatchers("/order/*").authenticated()
-                // .antMatchers("/cart/*").authenticated()
-                // authorization
-                .antMatchers("/admin").hasAnyAuthority("ADMIN")
-
+                .antMatchers("/order/*").authenticated()
+                .antMatchers("/cart/*").authenticated()
+                .antMatchers("/create/*").authenticated()
+                // .antMatchers("/admin/*").hasAnyAuthority("ADMIN")
                 .and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.addFilterBefore(jwtFilter,

@@ -27,11 +27,15 @@ public class ProductController {
         System.out.println("get products");
         return productService.getProducts();
     }
-
+    @GetMapping("/productsByName/{name}")
+    public ResponseEntity<ResponseObject> GetProductsByName(@PathVariable String  name) {
+        System.out.println(name);
+        return productService.getProductsByName(name);
+    }
     @PostMapping("/create/product")
-    public ResponseEntity<ResponseObject> addProduct(HttpServletRequest request,
+    public ResponseEntity<ResponseObject> addProduct(
             @RequestBody ProductDTOCreate productDTOCreate) {
-        return productService.createProduct(request, productDTOCreate);
+        return productService.createProduct(productDTOCreate);
     }
 
     @GetMapping("/buy/{id}")

@@ -13,4 +13,5 @@ public interface OrderService {
 
     ResponseEntity<ResponseObject> getOrders(HttpServletRequest request);
 
+    ResponseEntity<ResponseObject> getOrdersById(HttpServletRequest request, int id);
 }
