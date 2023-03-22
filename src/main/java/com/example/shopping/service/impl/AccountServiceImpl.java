@@ -72,7 +72,7 @@ public class AccountServiceImpl implements AccountService {
                         Account re = accountRepository.save(reg);
 
                         return ResponseEntity.ok()
-                                        .body(ResponseObject.builder().status("400")
+                                        .body(ResponseObject.builder().status("500")
                                                         .message("register successfull")
                                                         .data(null)
                                                         .build());
